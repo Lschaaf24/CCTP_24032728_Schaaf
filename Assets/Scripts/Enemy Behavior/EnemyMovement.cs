@@ -92,7 +92,7 @@ public class EnemyMovement : MonoBehaviour
 
     void FixedUpdate()
     {
-        if (dead || health.isKnockedBack || enemyCombat.isStunned) return;
+        if (dead || health.isKnockedBack || enemyCombat.isStunned || player == null) return;
 
         Vector2 pos = rb.position;
         Vector2 toPlayer = (Vector2)player.position - pos;

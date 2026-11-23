@@ -9,6 +9,7 @@ public class OrcCombat : EnemyCombat
     private EnemyHealthBar enemyHealthBar;
     [SerializeField] private GameObject parryParticle;
     private Animator animator;
+    private Transform player;
     // Start is called before the first frame update
     void Start()
     {
@@ -16,13 +17,13 @@ public class OrcCombat : EnemyCombat
         enemyHealthBar.setMaxHealth(stats.maxHealth);
 
         animator = GetComponent<Animator>();
+        player = GameObject.FindGameObjectWithTag("Player").transform;
     }
 
     // Update is called once per frame
     void Update()
     {
-        GameObject playerObject = GameObject.FindGameObjectWithTag("Player");
-        Transform player = playerObject.transform;
+        if (player == null) return;
         float distanceToPlayer = Vector2.Distance(transform.position, player.position);
 
         if (CanAttack(distanceToPlayer)){

@@ -16,8 +16,8 @@ public class PlayerCombat : MonoBehaviour
     private bool isDead = false;
     public bool isAttacking = false;
 
-    [SerializeField]private float parryWindow = 0.1f;
-    [SerializeField]private float parryCooldown = 1.0f;
+    [SerializeField] private float parryWindow = 0.1f;
+    [SerializeField] private float parryCooldown = 1.0f;
     private bool canParry = true;
     private bool parryActive = false;
     
@@ -48,9 +48,14 @@ public class PlayerCombat : MonoBehaviour
 
     public void OnAttack(InputValue value)
     {
-        lastAttackTime = Time.time;
-        animator.SetTrigger("Attack");
-        isAttacking = true;
+        if(Time.time >= lastAttackTime +  stats.attackCooldown)
+        {
+            lastAttackTime = Time.time;
+
+            animator.SetTrigger("Attack");
+            isAttacking = true;
+
+        }
 
     }
 
