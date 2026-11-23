@@ -7,7 +7,7 @@ AnimationClip:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: Dodge
-  serializedVersion: 6
+  serializedVersion: 7
   m_Legacy: 0
   m_Compressed: 0
   m_UseHighQualityCurve: 1
@@ -18,7 +18,8 @@ AnimationClip:
   m_ScaleCurves: []
   m_FloatCurves: []
   m_PPtrCurves:
-  - curve:
+  - serializedVersion: 2
+    curve:
     - time: 0
       value: {fileID: 21300000, guid: 759c87997b5994d0f9755540af7fc5fb, type: 3}
     - time: 0.06666667
@@ -36,13 +37,12 @@ AnimationClip:
     - time: 0.46666667
       value: {fileID: 21300000, guid: e2be16796c3c743beb9e701ae51977df, type: 3}
     - time: 0.53333336
-      value: {fileID: 21300000, guid: 49757161d5bdd446294b2a4f92349894, type: 3}
-    - time: 0.6
       value: {fileID: 21300000, guid: 759c87997b5994d0f9755540af7fc5fb, type: 3}
     attribute: m_Sprite
     path: 
     classID: 212
     script: {fileID: 0}
+    flags: 2
   m_SampleRate: 60
   m_WrapMode: 0
   m_Bounds:
@@ -57,6 +57,8 @@ AnimationClip:
       typeID: 212
       customType: 23
       isPPtrCurve: 1
+      isIntCurve: 0
+      isSerializeReferenceCurve: 0
     pptrCurveMapping:
     - {fileID: 21300000, guid: 759c87997b5994d0f9755540af7fc5fb, type: 3}
     - {fileID: 21300000, guid: afe071e61364e4bbe9c662b9abc9678b, type: 3}
@@ -66,14 +68,13 @@ AnimationClip:
     - {fileID: 21300000, guid: 9a6ce291a8d5e4011a23ffee4b2e3d78, type: 3}
     - {fileID: 21300000, guid: 85dd8a7010dfc4a8f82b23c819f07cbb, type: 3}
     - {fileID: 21300000, guid: e2be16796c3c743beb9e701ae51977df, type: 3}
-    - {fileID: 21300000, guid: 49757161d5bdd446294b2a4f92349894, type: 3}
     - {fileID: 21300000, guid: 759c87997b5994d0f9755540af7fc5fb, type: 3}
   m_AnimationClipSettings:
     serializedVersion: 2
     m_AdditiveReferencePoseClip: {fileID: 0}
     m_AdditiveReferencePoseTime: 0
     m_StartTime: 0
-    m_StopTime: 0.6166667
+    m_StopTime: 0.55
     m_OrientationOffsetY: 0
     m_Level: 0
     m_CycleOffset: 0

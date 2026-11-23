@@ -22,7 +22,6 @@ public class EnemyMovement : MonoBehaviour
 
     private float nextRepathTime;
     int stepCounter;
-    bool hasLineOfSight;
     Vector2 lastPathTargetPos;
     Vector2 cachedSeperation;
     static readonly Collider2D[] neighbourBuffer = new Collider2D[10];
@@ -54,6 +53,13 @@ public class EnemyMovement : MonoBehaviour
 
         nextRepathTime = Time.time + Random.value * repathInterval;
         stepCounter = Random.Range(0, seperationEveryNSteps);
+
+        enemyFilter = new ContactFilter2D 
+        {
+            useLayerMask = true,
+            layerMask = enemyLayer,
+            useTriggers = false
+        };
         //InvokeRepeating("UpdatePath", 0f, 0.6f);
 
     }
@@ -80,13 +86,13 @@ public class EnemyMovement : MonoBehaviour
     void OnPathComplete(Path p){
         if(!p.error){
             path = p;
-            currentWaypoint = 0;
+            currentWaypoint = 1;
         }
     }
 
     void FixedUpdate()
     {
-        if (path == null || dead || health.isKnockedBack || enemyCombat.isStunned) return;
+        if (dead || health.isKnockedBack || enemyCombat.isStunned) return;
 
         Vector2 pos = rb.position;
         Vector2 toPlayer = (Vector2)player.position - pos;
@@ -128,7 +134,7 @@ public class EnemyMovement : MonoBehaviour
 
     Vector2 GetDesiredDirection(Vector2 pos, Vector2 toPlayer)
     {
-        if(hasLineOfSight || path == null){
+        if(path == null){
             return toPlayer.normalized;
         }
 

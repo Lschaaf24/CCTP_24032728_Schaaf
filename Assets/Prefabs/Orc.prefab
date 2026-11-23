@@ -602,14 +602,11 @@ MonoBehaviour:
   nextWaypointDistance: 2
   repathInterval: 0.6
   repathMinPlayerMove: 0.5
-  obstacleLayer:
-    serializedVersion: 2
-    m_Bits: 0
   enemyLayer:
     serializedVersion: 2
-    m_Bits: 64
-  seperationRadius: 2
-  seperationWeight: 1.5
+    m_Bits: 0
+  seperationRadius: 1
+  seperationWeight: 3
   seperationEveryNSteps: 3
   animator: {fileID: -4478616146766739149}
 --- !u!114 &-3582878005923074003
