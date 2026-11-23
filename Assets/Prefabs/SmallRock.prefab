@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 918171934249701132}
   - component: {fileID: 3019215756999745979}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: SmallRock
   m_TagString: Untagged
   m_Icon: {fileID: 0}

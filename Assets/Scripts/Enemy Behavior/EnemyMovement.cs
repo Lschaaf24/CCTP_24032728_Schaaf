@@ -14,7 +14,6 @@ public class EnemyMovement : MonoBehaviour
 
     [SerializeField] private float repathInterval = 0.6f;
     [SerializeField] private float repathMinPlayerMove = 0.5f;
-    [SerializeField] private LayerMask obstacleLayer;
 
     [SerializeField] private LayerMask enemyLayer;
     [SerializeField] private float seperationRadius = 0.8f;
@@ -23,6 +22,11 @@ public class EnemyMovement : MonoBehaviour
 
     private float nextRepathTime;
     int stepCounter;
+    bool hasLineOfSight;
+    Vector2 lastPathTargetPos;
+    Vector2 cachedSeperation;
+    static readonly Collider2D[] neighbourBuffer = new Collider2D[10];
+    ContactFilter2D enemyFilter;
 
     Path path;
     int currentWaypoint = 0;
@@ -50,13 +54,27 @@ public class EnemyMovement : MonoBehaviour
 
         nextRepathTime = Time.time + Random.value * repathInterval;
         stepCounter = Random.Range(0, seperationEveryNSteps);
-        InvokeRepeating("UpdatePath", 0f, 0.6f);
+        //InvokeRepeating("UpdatePath", 0f, 0.6f);
 
     }
 
-    void UpdatePath(){
-        if(seeker.IsDone())
-        seeker.StartPath(rb.position, player.position, OnPathComplete);
+    void Update(){
+        if(dead || player == null) return;
+        if(Time.time < nextRepathTime) return;
+        nextRepathTime = Time.time + repathInterval;
+
+        Vector2 pos = rb.position;
+        Vector2 playerPos = player.position;
+
+        if((playerPos - pos).sqrMagnitude > detectionRadius * detectionRadius) return;
+
+        if((playerPos - lastPathTargetPos).sqrMagnitude < repathMinPlayerMove * repathMinPlayerMove && path!=null) return;
+
+        if(seeker.IsDone()){
+            lastPathTargetPos = playerPos;
+            Debug.Log("start path");
+            seeker.StartPath(pos, playerPos, OnPathComplete);
+        }
     }
 
     void OnPathComplete(Path p){
@@ -70,51 +88,88 @@ public class EnemyMovement : MonoBehaviour
     {
         if (path == null || dead || health.isKnockedBack || enemyCombat.isStunned) return;
 
-        if (currentWaypoint >= path.vectorPath.Count)
-        {
-            reachedEndOfPath = true;
+        Vector2 pos = rb.position;
+        Vector2 toPlayer = (Vector2)player.position - pos;
+        float sqrDist = toPlayer.sqrMagnitude;
+        float attackRange = enemyCombat.stats.attackRange;
+
+        if(++stepCounter >= seperationEveryNSteps){
+            stepCounter = 0;
+            cachedSeperation = CalculateSeperation(pos);
+        }
+
+        bool inDetection = sqrDist < detectionRadius * detectionRadius;
+        bool inAttackRange = sqrDist <= attackRange * attackRange;
+
+        if(!inDetection){
+            rb.linearVelocity = Vector2.zero;
+            animator.SetBool("Running", false);
             return;
-            
         }
-        else
-        {
-            reachedEndOfPath = false;
+        if(inAttackRange){
+            rb.linearVelocity = cachedSeperation * speed * 0.5f;
+            animator.SetBool("Running", false);
+            return;
         }
+        
+        Vector2 desired = GetDesiredDirection(pos, toPlayer);
 
+        Vector2 move = desired + cachedSeperation * seperationWeight;
+        if(move.sqrMagnitude > 1f) move.Normalize();
 
-        if (player != null)
-        {
-            Vector2 direction = ((Vector2)path.vectorPath[currentWaypoint] - rb.position).normalized ;
-            float distanceToPlayer = Vector2.Distance(transform.position, player.position);
+        rb.linearVelocity = move * speed;
 
-            if (distanceToPlayer > enemyCombat.stats.attackRange && distanceToPlayer < detectionRadius)
-            {
-                rb.linearVelocity = direction * speed;
-                animator.SetBool("Running", true);
+        animator.SetBool("Running", true);
 
-                if (direction.x > 0f)
-                {
-                    spriteRenderer.flipX = false;
-                }
-                else if (direction.x < 0f)
-                {
-                    spriteRenderer.flipX = true;
-                }
-                
-                float distanceAlongPath = Vector2.Distance(rb.position, path.vectorPath[currentWaypoint]);
-            
-                if (distanceAlongPath < nextWaypointDistance)
-                {
-                    currentWaypoint++;
-                }
-            }
-            else
-            {
-                rb.linearVelocity = Vector2.zero;
-                animator.SetBool("Running", false);
-            }
-        }
+        if(move.x > 0.01f) spriteRenderer.flipX = false;
+        else if(move.x < -0.01f) spriteRenderer.flipX = true;
+
     }
+
+    Vector2 GetDesiredDirection(Vector2 pos, Vector2 toPlayer)
+    {
+        if(hasLineOfSight || path == null){
+            return toPlayer.normalized;
+        }
+
+        while(currentWaypoint < path.vectorPath.Count){
+            Vector2 wp = path.vectorPath[currentWaypoint];
+            if((wp - pos).sqrMagnitude < nextWaypointDistance * nextWaypointDistance)
+            {
+                currentWaypoint++;
+            }
+            else 
+            {
+                return (wp - pos).normalized;
+            }
+        }
+        
+        return toPlayer.normalized;
+    }
+
+    Vector2 CalculateSeperation(Vector2 pos)
+    {
+        int count = Physics2D.OverlapCircle(pos, seperationRadius, enemyFilter, neighbourBuffer);
+        Vector2 push = Vector2.zero;
+        int neighbours = 0;
+
+        for(int i = 0; i < count; i++){
+
+            var other = neighbourBuffer[i];
+            if(other.attachedRigidbody == rb) continue;
+
+            Vector2 away = pos - (Vector2)other.transform.position;
+            float dist = away.magnitude;
+            if(dist < 0.0001f) {away = Random.insideUnitCircle; dist = 0.1f;}
+
+            push += (away / dist) * (1f - dist / seperationRadius);
+            neighbours++;
+
+        }
+        return neighbours > 0 ? push / neighbours : Vector2.zero;
+
+    }
+
     public void MovementDeath(){
         Debug.Log("Enemy died!");
         dead = true;

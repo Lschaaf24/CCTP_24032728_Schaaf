@@ -596,12 +596,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f31c2de2160a7425dbd1154b12a0392c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: 2
-  animator: {fileID: -4478616146766739149}
-  detectionRadius: 8
   dead: 0
+  speed: 2
+  detectionRadius: 8
   nextWaypointDistance: 2
-  enemyCombat: {fileID: 5632285736797042913}
+  repathInterval: 0.6
+  repathMinPlayerMove: 0.5
+  obstacleLayer:
+    serializedVersion: 2
+    m_Bits: 0
+  enemyLayer:
+    serializedVersion: 2
+    m_Bits: 64
+  seperationRadius: 2
+  seperationWeight: 1.5
+  seperationEveryNSteps: 3
+  animator: {fileID: -4478616146766739149}
 --- !u!114 &-3582878005923074003
 MonoBehaviour:
   m_ObjectHideFlags: 0
