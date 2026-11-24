@@ -75,6 +75,7 @@ public class playerMovement : MonoBehaviour
 
 
     private void runningAnimations(){
+
         var particleDirection = runParticle.velocityOverLifetime;
 
         if (movementInput.x > 0)
@@ -91,7 +92,10 @@ public class playerMovement : MonoBehaviour
             //spriteFlip = true;
             particleDirection.x = 0.1f;
             runParticle.transform.localPosition = new Vector3(0.55f, runParticle.transform.localPosition.y, 0);
-
+        }
+        else if(movementInput.x == 0)
+        {
+            runParticle.transform.localPosition = new Vector3(0.13f, runParticle.transform.localPosition.y , 0);
         }
 
         if (movementInput.x != 0 || movementInput.y != 0)

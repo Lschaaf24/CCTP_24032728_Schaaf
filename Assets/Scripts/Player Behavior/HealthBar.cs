@@ -9,14 +9,12 @@ public class HealthBar : MonoBehaviour
     public void setMaxHealth(int health){
         slider.maxValue = health;
         slider.value = health;
-
+        targetFillAmount = health;
     }
 
     private void Update()
     {
-
         slider.value = Mathf.Lerp(slider.value, targetFillAmount, smoothSpeed * Time.deltaTime);
-
     }
 
 
